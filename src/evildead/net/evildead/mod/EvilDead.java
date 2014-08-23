@@ -1,8 +1,13 @@
 package net.evildead.mod;
 
+import net.evildead.mod.blocks.BloodyVine;
+import net.evildead.mod.blocks.StickyVine;
+import net.evildead.mod.items.KnowbyRecord;
 import net.evildead.mod.items.NecroBook;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
@@ -24,6 +29,10 @@ public class EvilDead {
 	EvilDeadWorldGen eventWorldGen = new EvilDeadWorldGen();
 	
 	public static Item itemNecroBook;
+	public static Item itemKnowbyRecord;
+	
+	public static Block blockStickyVine;
+	public static Block blockBloodyVine;
 	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent preEvent){
@@ -31,6 +40,14 @@ public class EvilDead {
 		// Items
 		itemNecroBook = new NecroBook().setUnlocalizedName("Necronomicon");
 		GameRegistry.registerItem(itemNecroBook, "Necronomicon");
+		itemKnowbyRecord = new KnowbyRecord("KnowbyRecord").setUnlocalizedName("KnowbyRecord");
+		GameRegistry.registerItem(itemKnowbyRecord, "KnowbyRecord");
+		
+		// Blocks
+		blockStickyVine = new StickyVine(Material.vine).setBlockName("StickyVine");
+		GameRegistry.registerBlock(blockStickyVine, "StickyVine");
+		blockBloodyVine = new BloodyVine(Material.vine).setBlockName("BloodyVine");
+		GameRegistry.registerBlock(blockBloodyVine, "BloodyVine");
 		
 		// Spawn
 		GameRegistry.registerWorldGenerator(eventWorldGen, 0);

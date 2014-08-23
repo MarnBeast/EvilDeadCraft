@@ -10,7 +10,6 @@ import net.minecraft.item.ItemBook;
 public class NecroBook extends ItemBook{
 
 	public NecroBook() {
-		this.setCreativeTab(getCreativeTab().tabMisc);	
 	}
 	
 	@SideOnly(Side.CLIENT)
