@@ -2,7 +2,7 @@ package net.evildead.mod;
 
 import net.evildead.mod.blocks.BloodyVine;
 import net.evildead.mod.blocks.StickyVine;
-import net.evildead.mod.items.KnowbyRecord;
+import net.evildead.mod.items.MusicDisc;
 import net.evildead.mod.items.NecroBook;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
@@ -40,8 +40,9 @@ public class EvilDead {
 		// Items
 		itemNecroBook = new NecroBook().setUnlocalizedName("Necronomicon");
 		GameRegistry.registerItem(itemNecroBook, "Necronomicon");
-		itemKnowbyRecord = new KnowbyRecord("KnowbyRecord").setUnlocalizedName("KnowbyRecord");
-		GameRegistry.registerItem(itemKnowbyRecord, "KnowbyRecord");
+		itemKnowbyRecord = new MusicDisc("Knowby").setUnlocalizedName("record_Knowby");
+		
+		GameRegistry.registerItem(itemKnowbyRecord, "record_Knowby");
 		
 		// Blocks
 		blockStickyVine = new StickyVine(Material.vine).setBlockName("StickyVine");
