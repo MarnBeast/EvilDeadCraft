@@ -1,5 +1,6 @@
 package net.evildead.mod;
 
+import net.evildead.common.EDProxyCommon;
 import net.evildead.mod.blocks.BloodyVine;
 import net.evildead.mod.blocks.StickyVine;
 import net.evildead.mod.items.MusicDisc;
@@ -13,9 +14,12 @@ import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 
@@ -26,6 +30,15 @@ public class EvilDead {
 	public static final String modid = "EvilDead";
 	public static final String version = "Ash v0.1";
 	
+	
+	@Instance(modid)
+	public static EvilDead instance;
+	
+	@SidedProxy(clientSide = "net.evildead.common.EDProxyCommon", serverSide = "net.evildead.common.EDProxyCommon")
+    public static EDProxyCommon proxy;
+	
+	
+	
 	EvilDeadWorldGen eventWorldGen = new EvilDeadWorldGen();
 	
 	public static Item itemNecroBook;
@@ -34,12 +47,17 @@ public class EvilDead {
 	public static Block blockStickyVine;
 	public static Block blockBloodyVine;
 	
+	public static final int guiIDNecro = 1;
+	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent preEvent){
 		
+		// Registering the GUI Handler for my custom Necronomicon GUI
+		NetworkRegistry.INSTANCE.registerGuiHandler(EvilDead.instance, proxy);
+		
+		
+		
 		// Items
-		itemNecroBook = new NecroBook().setUnlocalizedName("Necronomicon");
-		GameRegistry.registerItem(itemNecroBook, "Necronomicon");
 		itemKnowbyRecord = new MusicDisc("Knowby").setUnlocalizedName("record_Knowby");
 		
 		GameRegistry.registerItem(itemKnowbyRecord, "record_Knowby");
@@ -54,6 +72,12 @@ public class EvilDead {
 		GameRegistry.registerWorldGenerator(eventWorldGen, 0);
 
 		MapGenStructureIO.registerStructure(EvilCabinFirst.class, "EvilCabin");
+		
+		// Books
+		itemNecroBook = new NecroBook().setUnlocalizedName("Necronomicon");
+		GameRegistry.registerItem(itemNecroBook, "Necronomicon");
+		
+		
 		
 	}
 	
