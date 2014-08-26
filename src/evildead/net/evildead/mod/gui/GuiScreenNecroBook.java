@@ -24,17 +24,18 @@ public class GuiScreenNecroBook extends GuiScreen{
 //    private static final ResourceLocation bookGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/NecroBook.png");
 //    private static final ResourceLocation origGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/book.png");
 	
-	private static final ResourceLocation bookLeftGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/bookleft.png");
-	private static final ResourceLocation bookRightGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/bookright.png");
+	private static final ResourceLocation bookLeftGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/necroleft.png");
+	private static final ResourceLocation bookRightGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/necroright.png");
+	private static final ResourceLocation pageLeftGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/pages/necro0.png");
+	private static final ResourceLocation pageRightGuiTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/gui/pages/necro1.png");
 
     private final ItemStack bookObj;
     /** Update ticks since the gui was opened */
     private int updateCount;
-    private int bookImageWidth = 206;
+    private int bookImageWidth = 150;//206;
     private int bookImageHeight = 200;
     private int bookTotalPages = 6;
     private int currPage;
-    private NBTTagList bookPages;
     private String bookTitle = "Book of the Dead";
     
 
@@ -47,23 +48,6 @@ public class GuiScreenNecroBook extends GuiScreen{
 	
 	public GuiScreenNecroBook(EntityPlayer player, ItemStack stack) {
         this.bookObj = stack;
-        
-        if (stack.hasTagCompound())
-        {
-            NBTTagCompound nbttagcompound = stack.getTagCompound();
-            this.bookPages = nbttagcompound.getTagList("pages", 8);
-
-            if (this.bookPages != null)
-            {
-                this.bookPages = (NBTTagList)this.bookPages.copy();
-                this.bookTotalPages = this.bookPages.tagCount();
-
-                if (this.bookTotalPages < 1)
-                {
-                    this.bookTotalPages = 1;
-                }
-            }
-        }
 	}
 
 
@@ -138,15 +122,25 @@ public class GuiScreenNecroBook extends GuiScreen{
      */
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
+        byte localHeight = 8;
+        int localWidth = this.width / 2;
+        
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(bookRightGuiTextures);
-        int localWidth = this.width / 2;
-        byte localHeight = 8;
+        this.drawTexturedModalRect(localWidth, localHeight, 0, 0, this.bookImageWidth, this.bookImageHeight);
+        
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(pageRightGuiTextures);
         this.drawTexturedModalRect(localWidth, localHeight, 0, 0, this.bookImageWidth, this.bookImageHeight);
 
+        localWidth = localWidth - this.bookImageWidth;
+        
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(bookLeftGuiTextures);
-        localWidth = localWidth - this.bookImageWidth;
+        this.drawTexturedModalRect(localWidth, localHeight, 256 - this.bookImageWidth, 0, this.bookImageWidth, this.bookImageHeight);
+        
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(pageLeftGuiTextures);
         this.drawTexturedModalRect(localWidth, localHeight, 256 - this.bookImageWidth, 0, this.bookImageWidth, this.bookImageHeight);
         
 
