@@ -1,5 +1,7 @@
 package net.evildead.mod.items;
 
+import java.util.List;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -11,6 +13,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class RubbingPaper extends Item{
@@ -34,4 +37,13 @@ public class RubbingPaper extends Item{
 		FMLClientHandler.instance().displayGuiScreen(player, new GuiScreenRubbingPaper(player, stack));
 		return stack;
 	}
+	
+	@Override
+	 public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4){
+		par3List.add(this.getItemNameLocal());
+	 }
+
+	 public String getItemNameLocal(){
+		 return StatCollector.translateToLocal(this.getUnlocalizedName() + ".desc");
+	 }
 }

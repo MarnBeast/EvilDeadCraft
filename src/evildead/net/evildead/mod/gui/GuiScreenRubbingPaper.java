@@ -4,10 +4,19 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import net.evildead.mod.EvilDead;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentStyle;
+import net.minecraft.util.EnumChatFormatting;;
 
 public class GuiScreenRubbingPaper extends GuiScreen {
 
@@ -18,7 +27,8 @@ public class GuiScreenRubbingPaper extends GuiScreen {
     private int updateCount;
     private int bookImageWidth = 206;
     private int bookImageHeight = 200;
-    
+
+    private GuiButton buttonRecite;
     
 	public GuiScreenRubbingPaper(EntityPlayer player, ItemStack stack) {
 		this.bookObj = stack;
@@ -38,7 +48,11 @@ public class GuiScreenRubbingPaper extends GuiScreen {
      */
     public void initGui()
     {
+    	this.buttonList.clear();
         Keyboard.enableRepeatEvents(true);
+        
+        this.buttonList.add(this.buttonRecite = 
+        		new GuiButton(0, this.width / 2 - 50, this.bookImageHeight - 16, 98, 20, I18n.format("gui.recite", new Object[0])));
     }
     
     /**
@@ -49,13 +63,36 @@ public class GuiScreenRubbingPaper extends GuiScreen {
         Keyboard.enableRepeatEvents(false);
     }
     
+    protected void actionPerformed(GuiButton button)
+    {
+    	if(button.enabled)
+    	{
+    		if(button.id == 0)
+    		{
+    			// START MY AWESOME EVENT!!!
+    			String incantation = "Kanda… Es-trada… Montos… Kanda…";
+
+    			IChatComponent chat = new ChatComponentText("<" + mc.thePlayer.getDisplayName() + "> ");
+    			
+    			IChatComponent kandaChat = new ChatComponentText(incantation);
+    			kandaChat.setChatStyle(new ChatStyle().setItalic(true).setColor(EnumChatFormatting.GRAY));
+    			
+    			chat.appendSibling(kandaChat);
+
+    			this.mc.thePlayer.addChatMessage(chat);
+                this.mc.displayGuiScreen((GuiScreen)null);
+    		}
+    	}
+    }
+    
+    
     /**
      * Draws the screen and all the components in it.
      */
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
         byte localHeight = 8;
-        int localWidth = (this.width - this.bookImageWidth + 20) / 2;
+        int localWidth = (this.width - this.bookImageWidth + 22) / 2;
         
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(rubbingGuiTextures);

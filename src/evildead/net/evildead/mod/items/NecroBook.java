@@ -1,5 +1,7 @@
 package net.evildead.mod.items;
 
+import java.util.List;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -9,8 +11,10 @@ import net.evildead.mod.gui.GuiScreenNecroBook;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class NecroBook extends Item{
@@ -36,5 +40,19 @@ public class NecroBook extends Item{
 		FMLClientHandler.instance().displayGuiScreen(player, new GuiScreenNecroBook(player, stack));
 		return stack;
 	}
+	
+	@Override
+	 public EnumRarity getRarity(ItemStack itemStack){
+		 return EnumRarity.rare;
+	 }
+	
+	@Override
+	 public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4){
+		par3List.add(this.getItemNameLocal());
+	 }
+
+	 public String getItemNameLocal(){
+		 return StatCollector.translateToLocal(this.getUnlocalizedName() + ".desc");
+	 }
 	
 }

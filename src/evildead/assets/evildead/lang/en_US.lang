@@ -1,3 +1,8 @@
-item.Necronomicon.name=Necronomicon
+item.Necronomicon.name=Naturom Demonto
+item.Necronomicon.desc="Book of the Dead"
+item.RubbingPaper.name=Charcoal Rubbing
+item.RubbingPaper.desc="Kunda Estratta Montoss Canda"
 item.record_Knowby.name=Music Disk
 item.record_Knowby.desc="Professor Raymond Knowby - Journal 13"
+
+gui.recite=Recite Incantation
