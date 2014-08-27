@@ -6,21 +6,19 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.evildead.mod.EvilDead;
 import net.evildead.mod.gui.GuiScreenNecroBook;
+import net.evildead.mod.gui.GuiScreenRubbingPaper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class NecroBook extends Item{
+public class RubbingPaper extends Item{
 
+	private boolean returnedNecroBook = false;
 	
-	
-	
-	public NecroBook() { 
+	public RubbingPaper() {
 		this.setCreativeTab(getCreativeTab().tabMisc);
-		this.setContainerItem(this);	// we don't want the necronomicon being consumed by the rubbing recipe.
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -32,9 +30,8 @@ public class NecroBook extends Item{
 	@SideOnly(Side.CLIENT)
 	public ItemStack onItemRightClick (ItemStack stack, World world, EntityPlayer player){
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		player.openGui(EvilDead.instance, EvilDead.guiIDNecro, world, 0, 0, 0);
-		FMLClientHandler.instance().displayGuiScreen(player, new GuiScreenNecroBook(player, stack));
+		player.openGui(EvilDead.instance, EvilDead.guiIDRubbing, world, 0, 0, 0);
+		FMLClientHandler.instance().displayGuiScreen(player, new GuiScreenRubbingPaper(player, stack));
 		return stack;
 	}
-	
 }

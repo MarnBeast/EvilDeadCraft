@@ -5,11 +5,16 @@ import net.evildead.mod.blocks.BloodyVine;
 import net.evildead.mod.blocks.StickyVine;
 import net.evildead.mod.items.MusicDisc;
 import net.evildead.mod.items.NecroBook;
+import net.evildead.mod.items.RubbingPaper;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import cpw.mods.fml.common.Mod;
@@ -42,12 +47,14 @@ public class EvilDead {
 	EvilDeadWorldGen eventWorldGen = new EvilDeadWorldGen();
 	
 	public static Item itemNecroBook;
+	public static Item itemRubbingPaper;
 	public static Item itemKnowbyRecord;
 	
 	public static Block blockStickyVine;
 	public static Block blockBloodyVine;
 	
 	public static final int guiIDNecro = 1;
+	public static final int guiIDRubbing = 2;
 	
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent preEvent){
@@ -56,10 +63,8 @@ public class EvilDead {
 		NetworkRegistry.INSTANCE.registerGuiHandler(EvilDead.instance, proxy);
 		
 		
-		
 		// Items
 		itemKnowbyRecord = new MusicDisc("Knowby").setUnlocalizedName("record_Knowby");
-		
 		GameRegistry.registerItem(itemKnowbyRecord, "record_Knowby");
 		
 		// Blocks
@@ -76,6 +81,8 @@ public class EvilDead {
 		// Books
 		itemNecroBook = new NecroBook().setUnlocalizedName("Necronomicon");
 		GameRegistry.registerItem(itemNecroBook, "Necronomicon");
+		itemRubbingPaper = new RubbingPaper().setUnlocalizedName("RubbingPaper");
+		GameRegistry.registerItem(itemRubbingPaper, "RubbingPaper");
 		
 		
 		
@@ -84,10 +91,14 @@ public class EvilDead {
 	@EventHandler
 	public void Init(FMLInitializationEvent event){
 		
+		// Recipes
+		GameRegistry.addShapelessRecipe(new ItemStack(itemRubbingPaper), 
+				new Object[]{itemNecroBook, Items.paper, new ItemStack(Items.coal,1,1)});	// charcoal
 	}
 	
 	@EventHandler
 	public void PostInit(FMLPostInitializationEvent postEvent){
 		
 	}
+	
 }
