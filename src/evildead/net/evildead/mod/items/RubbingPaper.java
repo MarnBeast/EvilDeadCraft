@@ -7,7 +7,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.evildead.mod.EvilDead;
-import net.evildead.mod.gui.GuiScreenNecroBook;
+import net.evildead.mod.gui.GuiScreenEDBook;
 import net.evildead.mod.gui.GuiScreenRubbingPaper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
