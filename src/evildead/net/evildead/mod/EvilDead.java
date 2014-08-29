@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -61,7 +62,6 @@ public class EvilDead {
 		
 		// Registering the GUI Handler for my custom Necronomicon GUI
 		NetworkRegistry.INSTANCE.registerGuiHandler(EvilDead.instance, proxy);
-		
 		
 		// Items
 		itemKnowbyRecord = new MusicDisc("Knowby").setUnlocalizedName("record_Knowby");

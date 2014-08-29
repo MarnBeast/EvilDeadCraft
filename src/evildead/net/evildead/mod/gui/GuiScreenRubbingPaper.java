@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import net.evildead.mod.EvilDead;
+import net.evildead.wherethefunstarts.Summoner;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -70,17 +71,8 @@ public class GuiScreenRubbingPaper extends GuiScreen {
     		if(button.id == 0)
     		{
     			// START MY AWESOME EVENT!!!
-    			String incantation = "Kanda… Es-trada… Montos… Kanda…";
-
-    			IChatComponent chat = new ChatComponentText("<" + mc.thePlayer.getDisplayName() + "> ");
-    			
-    			IChatComponent kandaChat = new ChatComponentText(incantation);
-    			kandaChat.setChatStyle(new ChatStyle().setItalic(true).setColor(EnumChatFormatting.GRAY));
-    			
-    			chat.appendSibling(kandaChat);
-
-    			this.mc.thePlayer.addChatMessage(chat);
-                this.mc.displayGuiScreen((GuiScreen)null);
+    			Summoner summoner = new Summoner(mc);
+    			summoner.begin();
     		}
     	}
     }
