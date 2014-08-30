@@ -1,10 +1,16 @@
 package net.evildead.mod.gui;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.evildead.mod.EvilDead;
-import net.evildead.wherethefunstarts.Summoner;
+import net.evildead.network.EDMessage;
+import net.evildead.util.EDReference;
+import net.evildead.wherethefunstarts.Summon;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -71,8 +77,10 @@ public class GuiScreenRubbingPaper extends GuiScreen {
     		if(button.id == 0)
     		{
     			// START MY AWESOME EVENT!!!
-    			Summoner summoner = new Summoner(mc);
-    			summoner.begin();
+    			String msg = (mc.theWorld.isRemote == true) ? "CLIENT" : "SERVER";
+    			mc.thePlayer.sendChatMessage(msg + " sending");
+    			EvilDead.network.sendToServer(new EDMessage(EDReference.MessageFlags.SUMMON_MESSAGE));
+                this.mc.displayGuiScreen((GuiScreen)null);
     		}
     	}
     }

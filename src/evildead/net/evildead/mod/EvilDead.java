@@ -8,6 +8,7 @@ import net.evildead.mod.items.NecroBook;
 import net.evildead.mod.items.RubbingPaper;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
+import net.evildead.network.EDMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,8 +27,10 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 
 @Mod(modid = EvilDead.modid, version = EvilDead.version)
@@ -43,7 +46,7 @@ public class EvilDead {
 	@SidedProxy(clientSide = "net.evildead.common.EDProxyCommon", serverSide = "net.evildead.common.EDProxyCommon")
     public static EDProxyCommon proxy;
 	
-	
+	public static SimpleNetworkWrapper network;
 	
 	EvilDeadWorldGen eventWorldGen = new EvilDeadWorldGen();
 	
@@ -60,7 +63,12 @@ public class EvilDead {
 	@EventHandler
 	public void PreInit(FMLPreInitializationEvent preEvent){
 		
-		// Registering the GUI Handler for my custom Necronomicon GUI
+		// Message channel - for sending the summoner trigger to the server.
+		network = NetworkRegistry.INSTANCE.newSimpleChannel("EvilDead");
+		network.registerMessage(EDMessage.Handler.class, EDMessage.class, 0, Side.SERVER);
+		network.registerMessage(EDMessage.Handler.class, EDMessage.class, 1, Side.CLIENT);
+		
+		// GUI - for my custom Necronomicon GUI
 		NetworkRegistry.INSTANCE.registerGuiHandler(EvilDead.instance, proxy);
 		
 		// Items
