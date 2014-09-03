@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 
 public class BloodyVine extends BlockWeb{
 
-	public BloodyVine(Material material){
+	public BloodyVine(){
 		super();
 		
 		this.setHardness(2.0F);

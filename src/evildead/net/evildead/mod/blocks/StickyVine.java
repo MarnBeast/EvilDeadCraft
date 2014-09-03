@@ -9,14 +9,15 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 
 public class StickyVine extends BlockWeb{
 
-	public StickyVine(Material material){
+	public StickyVine(){
 		super();
 		
 		this.setHardness(1.0F);
-		this.setResistance(3.0F);
+		this.setResistance(3.0F);   
 		this.setStepSound(soundTypeGrass);
 		this.setCreativeTab(getCreativeTabToDisplayOn().tabDecorations);
-		this.setLightOpacity(8);
+		this.setLightOpacity(6);
+		this.setLightLevel(0.0f);
 	}
 
 

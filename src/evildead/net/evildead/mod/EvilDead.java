@@ -2,13 +2,14 @@ package net.evildead.mod;
 
 import net.evildead.common.EDProxyCommon;
 import net.evildead.mod.blocks.BloodyVine;
+import net.evildead.mod.blocks.DarkAir;
 import net.evildead.mod.blocks.StickyVine;
 import net.evildead.mod.items.MusicDisc;
 import net.evildead.mod.items.NecroBook;
 import net.evildead.mod.items.RubbingPaper;
+import net.evildead.mod.network.EDMessage;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
-import net.evildead.network.EDMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,7 +54,8 @@ public class EvilDead {
 	public static Item itemNecroBook;
 	public static Item itemRubbingPaper;
 	public static Item itemKnowbyRecord;
-	
+
+	public static Block blockDarkAir;
 	public static Block blockStickyVine;
 	public static Block blockBloodyVine;
 	
@@ -76,9 +78,11 @@ public class EvilDead {
 		GameRegistry.registerItem(itemKnowbyRecord, "record_Knowby");
 		
 		// Blocks
-		blockStickyVine = new StickyVine(Material.vine).setBlockName("StickyVine");
+		blockDarkAir = new DarkAir().setBlockName("DarkAir");
+		GameRegistry.registerBlock(blockDarkAir, "DarkAir");
+		blockStickyVine = new StickyVine().setBlockName("StickyVine");
 		GameRegistry.registerBlock(blockStickyVine, "StickyVine");
-		blockBloodyVine = new BloodyVine(Material.vine).setBlockName("BloodyVine");
+		blockBloodyVine = new BloodyVine().setBlockName("BloodyVine");
 		GameRegistry.registerBlock(blockBloodyVine, "BloodyVine");
 		
 		// Spawn

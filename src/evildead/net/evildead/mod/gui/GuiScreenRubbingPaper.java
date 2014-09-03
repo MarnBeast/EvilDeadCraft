@@ -8,9 +8,9 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.evildead.mod.EvilDead;
-import net.evildead.network.EDMessage;
-import net.evildead.util.EDReference;
-import net.evildead.wherethefunstarts.Summon;
+import net.evildead.mod.network.EDMessage;
+import net.evildead.mod.util.EDReference;
+import net.evildead.mod.wherethefunstarts.Summon;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

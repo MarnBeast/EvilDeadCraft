@@ -1,10 +1,11 @@
-package net.evildead.util;
+package net.evildead.mod.util;
 
 public class EDReference {
 	
 	public static class MessageFlags{
 		public static final String SUMMON_MESSAGE = "KANDA!";
-		public static final String SOUND_MESSAGE = "SOUND:";
+		public static final String SOUND_MESSAGE = "SOUND";
+		public static final String SOUND_DELIMITER = ":";
 	}
 	
 	public static class Sounds{
