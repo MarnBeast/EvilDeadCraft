@@ -34,25 +34,10 @@ public class Summon {
 	private SummonerEventHandler sEvent = new SummonerEventHandler();
 	private ChunkCoordinates origin;
 	
-	private static final int RADIUS = 100;				// radius of summon event
-	private static final int VINERINGWIDTH = 20;		// depth of vine ring
-	private static final int VINECHANCE = 5;			// 1 in VINECHANCE chance
-	private static final int VINECYCLESONLEVEL = 2;		// how many times to cycle on a level before moving to the next level
-	private static final int VINETICKSPERLEVEL = 2;		// 10 seconds per level
-	
-	private static final double VINETICKSPERCYCLE = (double)VINETICKSPERLEVEL / VINECYCLESONLEVEL;
-	private static final int VINEXZDIVIDE = 1;//(int) (Math.sqrt(VINETICKSPERCYCLE) > 0 ? VINETICKSPERCYCLE : 1);
-	private static final int VINETICKSPERDIVIDEXZ = (int)((double)VINETICKSPERLEVEL / (VINECYCLESONLEVEL * VINEXZDIVIDE * VINEXZDIVIDE));
-	private static final int VINETICKS = RADIUS * VINETICKSPERLEVEL;
-	
+	private static final int RADIUS = 100;
 	private static final int DEEPENORIGIN = 10;
 
-	int vinesLevel = 0;
-	int xDivide = 0;
-	int zDivide = 0;
-	int vinesLevelTime = 0;
-	//int vinesMaxLevel = 150;
-
+	private VineGrower vines;
 	
 	public Summon(EntityPlayer summoner){
 		this.summoner = summoner;
@@ -61,7 +46,7 @@ public class Summon {
 	
 	public void begin() {
 
-		// This class does set block stuff and is designed to be operated by the server;
+		// This class does setblock stuff and is designed to be operated by the server;
 		if(!summoner.worldObj.isRemote)
 		{
 			/* Initialize */
@@ -85,6 +70,8 @@ public class Summon {
 	        SendSoundToAllAround(EDReference.Sounds.INVOCATION1, 
 	        		origin.posX, origin.posY, origin.posZ,
 	        		10f, 1f);
+	        
+	        vines = new VineGrower(summoner, origin, RADIUS);
 	        
 	        FMLCommonHandler.instance().bus().register(sEvent);
 		}
@@ -133,10 +120,12 @@ public class Summon {
 		@SubscribeEvent
 		public void onTick(TickEvent.ServerTickEvent event){
 			//printTick(count);
-			//if(count == 0) resetVines();
-			if(count < VINETICKS) growVines(count); //growVines(count);
+			//if(count == 0) vines.resetVines();
+			if(count > 600 && count < 1200) vines.simpleGrow(count);  		// 30 seconds
+			if(count > 1200 && count < 1800) vines.simpleShrink(count);    // 60 seconds
+			//if(count < vines.getTotalGrowTicks()) vines.grow(count); //growVines(count);
 			//if(count == 1950) throwDoors();
-			if(count > VINETICKS+400 && count < 2*VINETICKS + 400) shrinkVines(count);
+			//if(count > vines.getTotalGrowTicks()+400 && count < 2*vines.getTotalGrowTicks() + 400) vines.shrink(count);
 			
 			count++;
 		}
@@ -152,190 +141,9 @@ public class Summon {
 				summoner.addChatMessage(new ChatComponentText("Tick: " + count));
 			}
 			count++;
-			
-			
 	}
 	
-	// for debugging
-	private void resetVines() {
-		int rad = RADIUS * 2;
 
-		summoner.addChatMessage(new ChatComponentText("Resetting vines"));
-		for(int x = origin.posX - rad; x < origin.posX + rad; x++) {
-        	for(int y = origin.posY - rad; y < origin.posY + rad; y++) {
-        		for(int z = origin.posZ - rad; z < origin.posZ + rad; z++) {
-        			Block block = summoner.worldObj.getBlock(x, y, z);
-        			if(block == EvilDead.blockStickyVine || block == EvilDead.blockDarkAir) {
-        				summoner.worldObj.setBlockToAir(x, y, z);
-        			}
-        		}
-        	}
-		}
-		summoner.addChatMessage(new ChatComponentText("Resetting vines complete"));
-	}
-	
-	
-	private void growVines(int count) {
-		  
-		int modval = VINETICKSPERDIVIDEXZ; // vinesLevel / (RADIUS / VINEAVGTICKSPERLEVEL);  // We want to "grow" below ground much faster, since we want to get to the surface growth quickly. 
-		int mod = (modval != 0) ? count % modval : 0;				// Plus, this may make the vines look like they are slowing to a stop above ground.
-		if(mod == 0 && vinesLevel < RADIUS) {
-			for(int x = origin.posX - RADIUS + xDivide; x < origin.posX + RADIUS; x+=VINEXZDIVIDE) {
-	        	for(int z = origin.posZ - RADIUS + zDivide; z < origin.posZ + RADIUS; z+=VINEXZDIVIDE) {
-	    			
-	        		int y = origin.posY + vinesLevel;
-	        		setVine(x,y,z);
-	    			
-	        		y = origin.posY - vinesLevel;
-	        		setVine(x,y,z);
-		        }
-	        }
-			
-			xDivide++;
-			if(xDivide >= VINEXZDIVIDE){
-				xDivide = 0;
-				zDivide++;
-			}
-			if(zDivide >= VINEXZDIVIDE){
-				zDivide = 0;
-				vinesLevelTime++;
-			}
-			if(vinesLevelTime >= VINECYCLESONLEVEL) {
-				vinesLevelTime = 0;
-				vinesLevel++;
-			}
-			summoner.addChatMessage(new ChatComponentText("Vine level: " + vinesLevel + " - Cycle: " + vinesLevelTime));
-			//summoner.addChatMessage(new ChatComponentText("xdiv: " + xDivide + " - zdiv: " + zDivide));
-		}
-	}
-	
-	private void setVine(int x, int y, int z){
-
-		World world = summoner.worldObj;
-		
-		if(	((x < origin.posX - RADIUS + VINERINGWIDTH) ||
-    			(x > origin.posX + RADIUS - VINERINGWIDTH)) ||
-    			((z < origin.posZ - RADIUS + VINERINGWIDTH) ||
-    			(z > origin.posZ + RADIUS - VINERINGWIDTH))) {
-
-    			Block block = world.getBlock(x, y, z);
-    			
-        		if(world.isAirBlock(x, y, z) || block instanceof DarkAir) {
-        			if( !world.isAirBlock(x+1, y, z) && !(world.getBlock(x+1, y, z) instanceof DarkAir) ||
-    					!world.isAirBlock(x-1, y, z) && !(world.getBlock(x-1, y, z) instanceof DarkAir) ||
-    					!world.isAirBlock(x, y+1, z) && !(world.getBlock(x, y+1, z) instanceof DarkAir) ||
-    					!world.isAirBlock(x, y-1, z) && !(world.getBlock(x, y-1, z) instanceof DarkAir) ||
-    					!world.isAirBlock(x, y, z+1) && !(world.getBlock(x, y, z+1) instanceof DarkAir) ||
-    					!world.isAirBlock(x, y, z-1) && !(world.getBlock(x, y, z-1) instanceof DarkAir)) {
-        				
-        				int chance = world.rand.nextInt(VINECHANCE);
-        				if(chance == 0) {
-        					world.setBlock(x, y, z, EvilDead.blockStickyVine);
-        				}
-        				else {
-        					world.setBlock(x, y, z, EvilDead.blockDarkAir);
-        				}
-        			}
-        		}
-    		}
-	}
-
-	private void shrinkVines(int count) {
-		  
-		int modval = VINETICKSPERDIVIDEXZ; // vinesLevel / (RADIUS / VINEAVGTICKSPERLEVEL);  // We want to "grow" below ground much faster, since we want to get to the surface growth quickly. 
-		int mod = (modval != 0) ? count % modval : 0;				// Plus, this may make the vines look like they are slowing to a stop above ground.
-		if(mod == 0 && vinesLevel >= 0){
-			
-			World world = summoner.worldObj;
-			for(int x = origin.posX - RADIUS + xDivide; x < origin.posX + RADIUS; x+=VINEXZDIVIDE) {
-	        	for(int z = origin.posZ - RADIUS + zDivide; z < origin.posZ + RADIUS; z+=VINEXZDIVIDE) {
-	        		int y = origin.posY + vinesLevel;
-	        		removeVine(x,y,z);
-	    			
-	        		y = origin.posY - vinesLevel;
-	        		removeVine(x,y,z);
-		        }
-			}
-				
-			xDivide++;
-			if(xDivide >= VINEXZDIVIDE){
-				xDivide = 0;
-				zDivide++;
-			}
-			if(zDivide >= VINEXZDIVIDE){
-				zDivide = 0;
-				vinesLevelTime++;
-			}
-			if(vinesLevelTime >= VINECYCLESONLEVEL) {
-				vinesLevelTime = 0;
-				vinesLevel--;
-			}
-			summoner.addChatMessage(new ChatComponentText("Vine level: " + vinesLevel + " - Cycle: " + vinesLevelTime));
-			//summoner.addChatMessage(new ChatComponentText("xdiv: " + xDivide + " - zdiv: " + zDivide));
-		}
-	}
-	
-	private void removeVine(int x, int y, int z){
-
-		World world = summoner.worldObj;
-		
-		if(	((x < origin.posX - RADIUS + VINERINGWIDTH) ||
-		(x > origin.posX + RADIUS - VINERINGWIDTH)) ||
-		((z < origin.posZ - RADIUS + VINERINGWIDTH) ||
-		(z > origin.posZ + RADIUS - VINERINGWIDTH))) {
-		
-			Block block = world.getBlock(x, y, z);
-			
-    		if(block instanceof StickyVine || block instanceof DarkAir) {
-				int chance = 0;
-				if(vinesLevelTime < VINECYCLESONLEVEL-1) chance = world.rand.nextInt(VINECYCLESONLEVEL);
-				if(chance == 0) {
-					world.setBlockToAir(x, y, z);
-				}
-    		}
-		}
-	}
-	
-	
-//	private void shrinVines(int count) {
-//		int modval = vinesLevel / (RADIUS / VINETICKSPERLEVEL);  // We want to "grow" below ground much faster, since we want to get to the surface growth quickly. 
-//		int mod = (modval != 0) ? count % modval : 0;				// Plus, this may make the vines look like they are slowing to a stop above ground.
-//		if(mod == 0 && vinesLevel >= 0){
-//			
-//			World world = summoner.worldObj;
-//			int y = origin.posY - RADIUS + vinesLevel;
-//			
-//			summoner.addChatMessage(new ChatComponentText("Vine y: " + y));
-//			
-//			for(int x = origin.posX - RADIUS; x < origin.posX + RADIUS; x++) {
-//	        	for(int z = origin.posZ - RADIUS; z < origin.posZ + RADIUS; z++) {
-//	        		
-//	        		if(	((x < origin.posX - RADIUS + VINERINGWIDTH) ||
-//	        			(x > origin.posX + RADIUS - VINERINGWIDTH)) ||
-//	        			((z < origin.posZ - RADIUS + VINERINGWIDTH) ||
-//	        			(z > origin.posZ + RADIUS - VINERINGWIDTH))) {
-//	        			
-//	        			Block block = world.getBlock(x, y, z);
-//	        			
-//		        		if(block instanceof StickyVine || block instanceof DarkAir) {
-//	        				int chance = 0;
-//	        				if(vinesLevelTime < VINECYCLESONLEVEL) chance = world.rand.nextInt(VINECYCLESONLEVEL);
-//	        				if(chance == 0) {
-//	        					world.setBlockToAir(x, y, z);
-//	        				}
-//		        		}
-//	        		}
-//		        }
-//	        }
-//			
-//			vinesLevelTime++;
-//			if(vinesLevelTime >= VINECYCLESONLEVEL) {
-//				vinesLevelTime = 0;
-//				vinesLevel--;
-//			}
-//		}
-//	}
-//	
 	
 	private void throwDoors() {
 		
