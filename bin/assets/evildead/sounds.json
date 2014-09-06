@@ -1,0 +1,6 @@
+{
+    "records.Knowby": {"category": "record","sounds": [{"name": "Knowby","stream": true}]},
+    "invocation1": {"category": "ambient","sounds": [{"name": "StartInvocation","stream": true}]},
+    "invocation2": {"category": "ambient","sounds": [{"name": "MidInvocation","stream": true}]},
+    "invocation3": {"category": "ambient","sounds": [{"name": "EndInvocation","stream": true}]}
+}
