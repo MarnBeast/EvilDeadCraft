@@ -13,6 +13,18 @@ public class EDProxyCommon implements IGuiHandler
         
     }
     
+    public void registerRenderThings() {
+    	
+    }
+    
+    public void registerTileEntitySpecialRenderer() {
+    	
+    }
+
+
+    
+    /* GUI STUFF */
+    
     @Override
     public Object getServerGuiElement (int ID, EntityPlayer player, World world, int x, int y, int z)
     {
@@ -43,4 +55,5 @@ public class EDProxyCommon implements IGuiHandler
     {
         clientGuiHandlers.put(gui, handler);
     }
+    
 }

@@ -4,6 +4,8 @@ import net.evildead.common.EDProxyCommon;
 import net.evildead.mod.blocks.BloodyVine;
 import net.evildead.mod.blocks.DarkAir;
 import net.evildead.mod.blocks.StickyVine;
+import net.evildead.mod.entity.EntityPossessed;
+import net.evildead.mod.handler.EntityHandler;
 import net.evildead.mod.items.MusicDisc;
 import net.evildead.mod.items.NecroBook;
 import net.evildead.mod.items.RubbingPaper;
@@ -44,7 +46,7 @@ public class EvilDead {
 	@Instance(modid)
 	public static EvilDead instance;
 	
-	@SidedProxy(clientSide = "net.evildead.common.EDProxyCommon", serverSide = "net.evildead.common.EDProxyCommon")
+	@SidedProxy(clientSide = "net.evildead.common.EDProxyClient", serverSide = "net.evildead.common.EDProxyCommon")
     public static EDProxyCommon proxy;
 	
 	public static SimpleNetworkWrapper network;
@@ -96,8 +98,11 @@ public class EvilDead {
 		itemRubbingPaper = new RubbingPaper().setUnlocalizedName("RubbingPaper");
 		GameRegistry.registerItem(itemRubbingPaper, "RubbingPaper");
 		
+		// Entities
+		EntityHandler.registerMonsters(EntityPossessed.class, "Possessed");
 		
-		
+		// Remderers
+		proxy.registerRenderThings();
 	}
 	
 	@EventHandler
