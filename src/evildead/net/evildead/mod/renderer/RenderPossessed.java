@@ -5,6 +5,7 @@ import net.evildead.mod.entity.EntityPossessed;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +34,18 @@ public class RenderPossessed extends RenderLiving {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+	protected ResourceLocation getEntityTexture(Entity par1Entity) {
+		
+		EntityPossessed entity= (EntityPossessed)par1Entity;
+		
+		if (entity.texture != null){
+//			entity.texture = this.renderManager.renderEngine.getDynamicTextureLocation("skin_"+entity.getCustomNameTag(), new DynamicTexture(entity.imageTexture));
+//			entity.imageTexture = null;
+			return entity.texture;
+		}
+			
+		//return entity.texture;
+		
 		return texture;
 	}
 
