@@ -1,6 +1,7 @@
 package net.evildead.mod;
 
 import net.evildead.common.EDProxyCommon;
+import net.evildead.mod.blocks.BloodFluid;
 import net.evildead.mod.blocks.BloodyVine;
 import net.evildead.mod.blocks.DarkAir;
 import net.evildead.mod.blocks.StickyVine;
@@ -13,6 +14,7 @@ import net.evildead.mod.network.EDMessage;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -22,6 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -60,6 +64,7 @@ public class EvilDead {
 	public static Block blockDarkAir;
 	public static Block blockStickyVine;
 	public static Block blockBloodyVine;
+	public static Block blockBloodFluid;
 	
 	public static final int guiIDNecro = 1;
 	public static final int guiIDRubbing = 2;
@@ -86,6 +91,13 @@ public class EvilDead {
 		GameRegistry.registerBlock(blockStickyVine, "StickyVine");
 		blockBloodyVine = new BloodyVine().setBlockName("BloodyVine");
 		GameRegistry.registerBlock(blockBloodyVine, "BloodyVine");
+		
+		Fluid bloodFluid = new Fluid("Blood").setDensity(1200).setViscosity(2000);	// fluid explanations: http://www.minecraftforge.net/wiki/Create_a_Fluid
+		FluidRegistry.registerFluid(bloodFluid);
+		blockBloodFluid = new BloodFluid(bloodFluid, Material.water).setBlockName("BloodFluid");
+		GameRegistry.registerBlock(blockBloodFluid, "BloodFluid");
+		bloodFluid.setUnlocalizedName(blockBloodFluid.getUnlocalizedName());
+		
 		
 		// Spawn
 		GameRegistry.registerWorldGenerator(eventWorldGen, 0);
