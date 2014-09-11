@@ -38,6 +38,7 @@ public class Summon {
 	private static final int DEEPENORIGIN = 10;
 
 	private VineGrower vines;
+	private HouseBleeder bleeder;
 	
 	public Summon(EntityPlayer summoner){
 		this.summoner = summoner;
@@ -72,6 +73,7 @@ public class Summon {
 	        		10f, 1f);
 	        
 	        vines = new VineGrower(summoner, origin, RADIUS);
+	        bleeder = new HouseBleeder(summoner, origin, RADIUS);
 	        
 	        FMLCommonHandler.instance().bus().register(sEvent);
 		}
@@ -120,9 +122,10 @@ public class Summon {
 		@SubscribeEvent
 		public void onTick(TickEvent.ServerTickEvent event){
 			//printTick(count);
+			if(count == 0) bleeder.floodHouses();
 			//if(count == 0) vines.resetVines();
-			if(count > 600 && count < 1200) vines.simpleGrow(count);  		// 30 seconds
-			if(count > 1200 && count < 1800) vines.simpleShrink(count);    // 60 seconds
+			//if(count > 600 && count < 1200) vines.simpleGrow(count);  		// 30 seconds
+			//if(count > 1200 && count < 1800) vines.simpleShrink(count);    // 60 seconds
 			//if(count < vines.getTotalGrowTicks()) vines.grow(count); //growVines(count);
 			//if(count == 1950) throwDoors();
 			//if(count > vines.getTotalGrowTicks()+400 && count < 2*vines.getTotalGrowTicks() + 400) vines.shrink(count);

@@ -1,15 +1,10 @@
 package net.evildead.mod;
 
 import net.evildead.common.EDProxyCommon;
-import net.evildead.mod.blocks.BloodFluid;
-import net.evildead.mod.blocks.BloodyVine;
-import net.evildead.mod.blocks.DarkAir;
-import net.evildead.mod.blocks.StickyVine;
+import net.evildead.mod.blocks.*;
 import net.evildead.mod.entity.EntityPossessed;
 import net.evildead.mod.handler.EntityHandler;
-import net.evildead.mod.items.MusicDisc;
-import net.evildead.mod.items.NecroBook;
-import net.evildead.mod.items.RubbingPaper;
+import net.evildead.mod.items.*;
 import net.evildead.mod.network.EDMessage;
 import net.evildead.mod.worldgen.EvilDeadWorldGen;
 import net.evildead.mod.worldgen.structure.EvilCabinFirst;
@@ -65,6 +60,7 @@ public class EvilDead {
 	public static Block blockStickyVine;
 	public static Block blockBloodyVine;
 	public static Block blockBloodFluid;
+	public static Block blockTestMarker;
 	
 	public static final int guiIDNecro = 1;
 	public static final int guiIDRubbing = 2;
@@ -91,6 +87,8 @@ public class EvilDead {
 		GameRegistry.registerBlock(blockStickyVine, "StickyVine");
 		blockBloodyVine = new BloodyVine().setBlockName("BloodyVine");
 		GameRegistry.registerBlock(blockBloodyVine, "BloodyVine");
+		blockTestMarker = new TestMarker().setBlockName("TestMarker");
+		GameRegistry.registerBlock(blockTestMarker, "TestMarker");
 		
 		Fluid bloodFluid = new Fluid("Blood").setDensity(1200).setViscosity(2000);	// fluid explanations: http://www.minecraftforge.net/wiki/Create_a_Fluid
 		FluidRegistry.registerFluid(bloodFluid);
