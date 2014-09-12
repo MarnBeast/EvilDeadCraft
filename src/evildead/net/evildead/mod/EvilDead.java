@@ -16,6 +16,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraftforge.common.MinecraftForge;
@@ -51,6 +52,9 @@ public class EvilDead {
 	public static SimpleNetworkWrapper network;
 	
 	EvilDeadWorldGen eventWorldGen = new EvilDeadWorldGen();
+
+	public static final ResourceLocation particleTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/particle/particles.png");
+    public static final ResourceLocation defaultParticleTextures = new ResourceLocation("textures/particle/particles.png");
 	
 	public static Item itemNecroBook;
 	public static Item itemRubbingPaper;

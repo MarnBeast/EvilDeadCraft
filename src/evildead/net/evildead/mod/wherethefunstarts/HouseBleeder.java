@@ -40,7 +40,7 @@ public class HouseBleeder {
 		this.radius = radius;
 	}
 	
-	public void floodHouses() {
+	public void findHouses() {
 		
 		for(int x = origin.posX - radius; x < origin.posX + radius; x++) {
         	for(int z = origin.posZ - radius; z < origin.posZ + radius; z++) {
