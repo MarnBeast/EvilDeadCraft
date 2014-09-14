@@ -70,9 +70,6 @@ You're done!
 
 
 
-Directions stolen from sheenrox82's awesome instructions.
-```
-http://www.minecraftforum.net/forums/mapping-and-modding/mapping-and-modding-tutorials/1571395-1-7-2-windows-how-to-setup-a-minecraftforge-1-7-2
-```
+Directions stolen from sheenrox82's [awesome instructions](http://www.minecraftforum.net/forums/mapping-and-modding/mapping-and-modding-tutorials/1571395-1-7-2-windows-how-to-setup-a-minecraftforge-1-7-2)
 
 Special shoutout goes to diesieben07 on MinecraftForge.net forums for helping be get my directory structure working set up right! Check out his mod [Cameracraft](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1284425-1-4-7-cameracraft-2-3-take-photos-in-minecraft)!
