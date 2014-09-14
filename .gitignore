@@ -4,3 +4,4 @@
 !.gitignore
 !gradlew*
 !/gradle/
+!/README.txt
