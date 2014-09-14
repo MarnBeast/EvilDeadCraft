@@ -19,7 +19,7 @@ gradlew.bat eclipse
 
 Replace **eclipse** with **idea** if you are using IntelliJ IDEA.
 
-Now close the Command Prompt. Next you're going to want to make a new folder, name it whatever. This folder will be your workspace that you will actually use within Eclipse. I named mine, "The Mists of RioV 1.7.2". Leave it empty.
+Now close the Command Prompt. Next you're going to want to make a new folder, name it whatever. This folder will be your workspace that you will actually use within Eclipse. I named mine, "MC Workspace". Leave it empty.
 
 Open up Eclipse and set your workspace to the folder you just created.
 Now that you have that done, in your eclipse program, go to File > Import and under General choose Existing Projects Into Workspace
@@ -41,10 +41,13 @@ net.minecraft.launchwrapper.Launch
 
 We're still not done! Go into the arguments tab and add this for program arguments, replacing `forge` with whatever username you use for your forge installation:
 ```
---version 1.6 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --userProperties {} --accessToken Forge
+--version 1.6 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --userProperties {} --accessToken test
 ```
 
-and for VM arguments:
+That accessToken can be whatever you want; doens't have to be "test". Or you can optionally add `--username YourUsername --password YourPassword` instead of `--accessToken blah` to have forge log you into the Minecraft servers, allowing you to test your mod in a live environment.
+If you cannot hear anything when you run your mod, you may need to add `--assetIndex 1.7.10 --assetsDir C:\Users\YourUserName\.gradle\caches\minecraft\assets` to your arguments.
+
+Add in the VM arguments:
 
 ```
 -Dfml.ignoreInvalidMinecraftCertificates=true
@@ -59,7 +62,7 @@ cpw.mods.fml.relauncher.ServerLaunchWrapper
 
 No arguments are needed!
 
-After this, go to Help > Eclipse Marketplace and search "Gradle" and install the Gradle IDE, it should be the first one.
+After this, you can optionally go to Help > Eclipse Marketplace and search "Gradle" and install the Gradle IDE, it should be the first one.
 
 You're done!
 
@@ -71,3 +74,5 @@ Directions stolen from sheenrox82's awesome instructions.
 ```
 http://www.minecraftforum.net/forums/mapping-and-modding/mapping-and-modding-tutorials/1571395-1-7-2-windows-how-to-setup-a-minecraftforge-1-7-2
 ```
+
+Special shoutout goes to diesieben07 on MinecraftForge.net forums for helping be get my directory structure working set up right! Check out his mod [Cameracraft](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1284425-1-4-7-cameracraft-2-3-take-photos-in-minecraft)!
