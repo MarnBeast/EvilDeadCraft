@@ -17,11 +17,13 @@ public class HouseBleeder {
 	private ChunkCoordinates origin;
 	private int radius;
 	
-	private Traverser traverser;
-	private ArrayList<ChunkCoordinates> validAirInThisRoom;
-	private ArrayList<ChunkCoordinates> airToReplace = new ArrayList<ChunkCoordinates>();
+	private boolean foundHouses = false;
 	
-	private static final int MAXHOUSEAIRBLOCKS = 100;
+	private Traverser traverser;
+	private ArrayList<ChunkCoordinates> validAirInThisRoom;			// used by checkFacingBlockSidesForValidAir
+	private ArrayList<ArrayList<ChunkCoordinates>> roomsToFlood = new ArrayList<ArrayList<ChunkCoordinates>>();
+	
+	private static final int MAXHOUSEAIRBLOCKS = 150;
 	
 	
 
@@ -40,7 +42,44 @@ public class HouseBleeder {
 		this.radius = radius;
 	}
 	
+	
+	
+	public void dripBlood() {
+		if(!foundHouses) return;		// just in case we run into a race condition.
+		
+		for(ArrayList<ChunkCoordinates> airToReplace : roomsToFlood) {
+			for(ChunkCoordinates loc : airToReplace) {
+				if(world.getBlock(loc.posX, loc.posY, loc.posZ) == Blocks.air &&
+					World.doesBlockHaveSolidTopSurface(world, loc.posX, loc.posY + 1, loc.posZ)) {
+					
+					world.setBlock(loc.posX, loc.posY, loc.posZ, EvilDead.blockBloodDripper);
+				}
+			}
+		}
+	}
+	
+	public void setToAir() {
+		for(int x = origin.posX - radius; x < origin.posX + radius; x++) {
+        	for(int z = origin.posZ - radius; z < origin.posZ + radius; z++) {
+        		for(int y = origin.posY - radius; y < origin.posZ + radius; y++) {
+        			if(world.getBlock(x, y, z) == EvilDead.blockTestMarker ||
+        				world.getBlock(x, y, z) == EvilDead.blockBloodDripper) {
+        				world.setBlock(x, y, z, Blocks.air);
+        			}
+        		}
+        	}
+		}
+	}
+	
+	
+	/**
+	 * Finds the houses based on enclosed structures (a player cannot exit) with a door and remembers
+	 * them for reference when flooding.
+	 */
 	public void findHouses() {
+		
+		foundHouses = false;
+		roomsToFlood.clear();
 		
 		for(int x = origin.posX - radius; x < origin.posX + radius; x++) {
         	for(int z = origin.posZ - radius; z < origin.posZ + radius; z++) {
@@ -55,9 +94,12 @@ public class HouseBleeder {
         	}
 		}
 		
-		for(ChunkCoordinates loc : airToReplace) {
-			world.setBlock(loc.posX, loc.posY, loc.posZ, EvilDead.blockTestMarker);
+		for(ArrayList<ChunkCoordinates> airToReplace : roomsToFlood) {
+			for(ChunkCoordinates loc : airToReplace) {
+				//world.setBlock(loc.posX, loc.posY, loc.posZ, EvilDead.blockTestMarker);
+			}
 		}
+		foundHouses = true;
 	}
 	
 	
@@ -76,32 +118,37 @@ public class HouseBleeder {
 		if(traverser.facingValidAir()) {										// If the air in front of the door is air, check the rest of the room
 			boolean roomFound = checkFacingBlockSidesForValidAir(traverser);	// A complete room was mapped.
 			if(roomFound) {
-				airToReplace.addAll(validAirInThisRoom);
+				roomsToFlood.add(validAirInThisRoom);
 			}
 		}
 
 		// do both in front of and behind the door. Who knows, could be a room!
-		validAirInThisRoom.clear();
+
+		validAirInThisRoom = new ArrayList<ChunkCoordinates>();
 		traverser.turnAround();
 		if(traverser.facingValidAir()) {
 			boolean roomFound = checkFacingBlockSidesForValidAir(traverser);
 			if(roomFound) {
-				airToReplace.addAll(validAirInThisRoom);
+				roomsToFlood.add(validAirInThisRoom);
 			}
 		}
 	}
 	
 	
-	// Recursively move through the room checking for valid air.
+	// 
+	/**
+	 * Recursively move through the room checking for valid air.
+	 * @param traverser
+	 * @return False when the maximum amount of house air blocks has been reached and we should stop checking.
+	 */
 	private boolean checkFacingBlockSidesForValidAir(Traverser traverser) {
 		if(validAirInThisRoom.size() >= MAXHOUSEAIRBLOCKS) 
 			return false;
 		
-		boolean firstPass = validAirInThisRoom.size() < 1;
+		CoorDir origStraight = traverser.getStraightDir();
+		CoorDir origUp = traverser.getUpDir();
 		
 		traverser.moveStraight();		// move to facing block
-//		if(traverser.getStraightDir() == CoorDir.Yp) traverser.turnDown();		// get back on the xz plane
-//		else if(traverser.getStraightDir() == CoorDir.Yn) traverser.turnUp();
 		
 		ChunkCoordinates loc = traverser.getLocation();
 		validAirInThisRoom.add(loc);
@@ -115,40 +162,85 @@ public class HouseBleeder {
 		}
 	
 		traverser.turnUp(); 
-		traverser.turnRight();	// Right
+		if(traverser.getStraightDir() != origStraight || traverser.getUpDir() != origUp) {
+			System.out.println("BUG FOUND \"Down\"- oS=" + origStraight + " nS=" + traverser.getStraightDir() + ", oU=" + origUp + " nU=" + traverser.getUpDir() +
+					"\n" + traverser.getLocation().posX);
+			//traverser.setStraightDir(origStraight);
+			//traverser.setUpDir(origUp);
+		}
+//		else{
+//			System.out.println("NO BUG");
+//		}
+		traverser.turnRight();						// Right
 		if(	traverser.facingValidAir() &&
 				!chunkCoordinatesSaved(traverser.getBlockFacingCoords())){
 
-			if(!checkFacingBlockSidesForValidAir(traverser)) 
+			if(!checkFacingBlockSidesForValidAir(traverser))
 				return false;
 		}
 	
 		traverser.turnLeft();						// Straight
+		if(traverser.getStraightDir() != origStraight || traverser.getUpDir() != origUp) {
+			System.out.println("BUG FOUND \"Right\"- oS=" + origStraight + " nS=" + traverser.getStraightDir() + ", oU=" + origUp + " nU=" + traverser.getUpDir() +
+					"\n" + traverser.getLocation().posX);
+			traverser.setStraightDir(origStraight);
+			traverser.setUpDir(origUp);
+		}
+//		else{
+//			System.out.println("NO BUG");
+//		}
 		if(	traverser.facingValidAir() &&
 				!chunkCoordinatesSaved(traverser.getBlockFacingCoords())){
 
-			if(!checkFacingBlockSidesForValidAir(traverser)) 
+			if(!checkFacingBlockSidesForValidAir(traverser))
 				return false;
 		}
-	
+
+		if(traverser.getStraightDir() != origStraight || traverser.getUpDir() != origUp) {
+			System.out.println("BUG FOUND \"Straight\"- oS=" + origStraight + " nS=" + traverser.getStraightDir() + ", oU=" + origUp + " nU=" + traverser.getUpDir() +
+					"\n" + traverser.getLocation().posX);
+			traverser.setStraightDir(origStraight);
+			traverser.setUpDir(origUp);
+		}
+//		else{
+//			System.out.println("NO BUG");
+//		}
 		traverser.turnLeft();						// Left
 		if(	traverser.facingValidAir() &&
 				!chunkCoordinatesSaved(traverser.getBlockFacingCoords())){
 
-			if(!checkFacingBlockSidesForValidAir(traverser)) 
+			if(!checkFacingBlockSidesForValidAir(traverser))
 				return false;
 		}
 	
 		traverser.turnRight();
-		traverser.turnUp();	// Up
+		if(traverser.getStraightDir() != origStraight || traverser.getUpDir() != origUp) {
+			System.out.println("BUG FOUND \"Left\"- oS=" + origStraight + " nS=" + traverser.getStraightDir() + ", oU=" + origUp + " nU=" + traverser.getUpDir() +
+					"\n" + traverser.getLocation().posX);
+			traverser.setStraightDir(origStraight);
+			traverser.setUpDir(origUp);
+		}
+//		else{
+//			System.out.println("NO BUG");
+//		}
+		traverser.turnUp();							// Up
 		if(	traverser.facingValidAir() &&
 				!chunkCoordinatesSaved(traverser.getBlockFacingCoords())){
 
-			if(!checkFacingBlockSidesForValidAir(traverser)) 
+			if(!checkFacingBlockSidesForValidAir(traverser))
 				return false;
 		}
 	
 		traverser.turnDown(); traverser.moveBack();		// (back is taken care of via recursive return)
+		if(traverser.getStraightDir() != origStraight || traverser.getUpDir() != origUp) {
+			System.out.println("BUG FOUND \"Up\"- oS=" + origStraight + " nS=" + traverser.getStraightDir() + ", oU=" + origUp + " nU=" + traverser.getUpDir() +
+					"\n" + traverser.getLocation().posX);
+			traverser.setStraightDir(origStraight);
+			traverser.setUpDir(origUp);
+		}
+//		else{
+//			System.out.println("NO BUG");
+//		}
 		return true;
 	}
 

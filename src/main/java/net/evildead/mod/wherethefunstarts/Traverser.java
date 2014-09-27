@@ -27,6 +27,8 @@ public class Traverser{
 	public ChunkCoordinates getLocation() { return location; }
 	public CoorDir getUpDir() { return upIs; }
 	public CoorDir getStraightDir() { return straightIs; }
+	public void setUpDir(CoorDir up) { upIs = up; }
+	public void setStraightDir(CoorDir straight) { straightIs = straight; }
 
 
 	public ChunkCoordinates getBlockFacingCoords() {

@@ -64,6 +64,7 @@ public class EvilDead {
 	public static Block blockStickyVine;
 	public static Block blockBloodyVine;
 	public static Block blockBloodFluid;
+	public static Block blockBloodDripper;
 	public static Block blockTestMarker;
 	
 	public static final int guiIDNecro = 1;
@@ -93,6 +94,8 @@ public class EvilDead {
 		GameRegistry.registerBlock(blockBloodyVine, "BloodyVine");
 		blockTestMarker = new TestMarker().setBlockName("TestMarker");
 		GameRegistry.registerBlock(blockTestMarker, "TestMarker");
+		blockBloodDripper = new BloodDripper().setBlockName("BloodDripper");
+		GameRegistry.registerBlock(blockBloodDripper, "BloodDripper");
 		
 		Fluid bloodFluid = new Fluid("Blood").setDensity(1200).setViscosity(2000);	// fluid explanations: http://www.minecraftforge.net/wiki/Create_a_Fluid
 		FluidRegistry.registerFluid(bloodFluid);
@@ -115,7 +118,7 @@ public class EvilDead {
 		// Entities
 		EntityHandler.registerMonsters(EntityPossessed.class, "Possessed");
 		
-		// Remderers
+		// Renderers
 		proxy.registerRenderThings();
 	}
 	

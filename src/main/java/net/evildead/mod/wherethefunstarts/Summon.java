@@ -122,7 +122,9 @@ public class Summon {
 		@SubscribeEvent
 		public void onTick(TickEvent.ServerTickEvent event){
 			//printTick(count);
-			if(count == 0) bleeder.traverserTest();//.floodHouses();
+			if(count == 0) bleeder.setToAir();//findHouses();//traverserTest();//.floodHouses();
+			if(count == 200) bleeder.findHouses();//traverserTest();//.floodHouses();
+			if(count == 400) bleeder.dripBlood();	// 10 seconds later, drip blood.
 			//if(count == 0) vines.resetVines();
 			//if(count > 600 && count < 1200) vines.simpleGrow(count);  		// 30 seconds
 			//if(count > 1200 && count < 1800) vines.simpleShrink(count);    // 60 seconds

@@ -21,6 +21,10 @@ public class EntityDropBloodParticleFX extends EntityFX
     /** The height of the current bob */
     private int bobTimer;
     private static final String __OBFID = "CL_00000901"; 
+    
+    private boolean checkGround = false;		// ignore check for ground until this becomes true
+    // basically, if we start inside a block, continue dripping till we leave the block. Once we've
+    // dripped out of the block, start checking for the ground again.
 
     public EntityDropBloodParticleFX(World world, double x, double y, double z)
     {
@@ -95,7 +99,7 @@ public class EntityDropBloodParticleFX extends EntityFX
             this.setDead();
         }
 
-        if (this.onGround)
+        if (this.onGround && this.checkGround)
         {
             this.setDead();
             //this.worldObj.spawnParticle("splash", this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D);
@@ -106,6 +110,9 @@ public class EntityDropBloodParticleFX extends EntityFX
             
             this.motionX *= 0.699999988079071D;
             this.motionZ *= 0.699999988079071D;
+        }
+        else if(!this.onGround) {
+        	this.checkGround = true;
         }
 
         Material material = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)).getMaterial();
