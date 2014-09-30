@@ -87,8 +87,6 @@ public class BloodDripper extends Block{
         	
         	EntityDropBloodParticleFX suspended = new EntityDropBloodParticleFX(world, d5, d6, d7);
         	Minecraft.getMinecraft().effectRenderer.addEffect(suspended);
-        	
-        	System.out.println("DRIP");
         }
     }
 }

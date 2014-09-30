@@ -53,7 +53,7 @@ public class EvilDead {
 	
 	EvilDeadWorldGen eventWorldGen = new EvilDeadWorldGen();
 
-	public static final ResourceLocation particleTextures = new ResourceLocation(EvilDead.modid + ":" + "textures/particle/particles.png");
+	public static final ResourceLocation particleTextures = new ResourceLocation(EvilDead.modid + ":" + "particle/particles.png");
     public static final ResourceLocation defaultParticleTextures = new ResourceLocation("textures/particle/particles.png");
 	
 	public static Item itemNecroBook;

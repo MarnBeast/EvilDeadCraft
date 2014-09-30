@@ -2,7 +2,11 @@ package net.evildead.mod.wherethefunstarts;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.evildead.mod.EvilDead;
+import net.evildead.mod.wherethefunstarts.Summon.SummonerEventHandler;
 import net.evildead.mod.wherethefunstarts.Traverser.CoorDir;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +20,8 @@ public class HouseBleeder {
 	private World world;
 	private ChunkCoordinates origin;
 	private int radius;
+	
+	private HouseBleederEventHandler hbEvent = new HouseBleederEventHandler(this);
 	
 	private boolean foundHouses = false;
 	
@@ -43,34 +49,125 @@ public class HouseBleeder {
 	}
 	
 	
+	public void begin(){
+        FMLCommonHandler.instance().bus().register(hbEvent);
+	}
 	
-	public void dripBlood() {
+	
+	public class HouseBleederEventHandler{
+		HouseBleeder bleeder;
+		int count; boolean reset;
+		
+		public HouseBleederEventHandler(HouseBleeder instance) {
+			this.bleeder = instance;
+		}
+		
+		@SubscribeEvent
+		public void onTick(TickEvent.ServerTickEvent event){
+			if(count%20 == 0) printTick(count);
+			if(count == 0 && reset == false) { bleeder.setToAir(); reset = true; count -= 200; }//findHouses();//traverserTest();//.floodHouses();
+			
+			if(count == 0) bleeder.findHouses();//traverserTest();//.floodHouses();
+			
+			if(count == 200) bleeder.dripBlood(6, true);	// 10 seconds later, drip blood.
+			if(count == 800) bleeder.dripBlood(4, false);	// 10 seconds later, drip blood.
+			if(count == 1200) bleeder.dripBlood(0, false);	// 10 seconds later, drip blood.
+			
+			if(count == 1400) bleeder.floodWalls(8, true);
+			//if(count == 460) bleeder.floodWalls(2);
+			//if(count == 500) bleeder.floodWalls(0);
+			count++;
+		}
+
+		private void printTick(int count2) {
+			System.out.println("PRINT - " + count2);
+		}
+	}
+	
+	
+	public void dripBlood(int ratio, boolean atLeastOne) {
 		if(!foundHouses) return;		// just in case we run into a race condition.
+		
+		System.out.println("DRIP - " + ratio);
+		boolean placedFirst = false;
+		
+		ChunkCoordinates validLoc = null;
 		
 		for(ArrayList<ChunkCoordinates> airToReplace : roomsToFlood) {
 			for(ChunkCoordinates loc : airToReplace) {
 				if(world.getBlock(loc.posX, loc.posY, loc.posZ) == Blocks.air &&
-					World.doesBlockHaveSolidTopSurface(world, loc.posX, loc.posY + 1, loc.posZ)) {
+				   World.doesBlockHaveSolidTopSurface(world, loc.posX, loc.posY + 1, loc.posZ)) {
 					
-					world.setBlock(loc.posX, loc.posY, loc.posZ, EvilDead.blockBloodDripper);
+					validLoc = loc;
+					if(ratio == 0 || world.rand.nextInt(ratio) == 0) {
+						placedFirst = true;
+						world.setBlock(loc.posX, loc.posY, loc.posZ, EvilDead.blockBloodDripper);
+					}
 				}
 			}
 		}
-	}
-	
-	public void setToAir() {
-		for(int x = origin.posX - radius; x < origin.posX + radius; x++) {
-        	for(int z = origin.posZ - radius; z < origin.posZ + radius; z++) {
-        		for(int y = origin.posY - radius; y < origin.posZ + radius; y++) {
-        			if(world.getBlock(x, y, z) == EvilDead.blockTestMarker ||
-        				world.getBlock(x, y, z) == EvilDead.blockBloodDripper) {
-        				world.setBlock(x, y, z, Blocks.air);
-        			}
-        		}
-        	}
+		
+		// if we didn't get at least 1, place one in the last valid loc.
+		if(atLeastOne && !placedFirst && validLoc != null) {
+			world.setBlock(validLoc.posX, validLoc.posY, validLoc.posZ, EvilDead.blockBloodDripper);
 		}
 	}
 	
+	
+	public void floodWalls(int ratio, boolean atLeastOne) {
+		if(!foundHouses) return;		// just in case we run into a race condition.
+		
+		System.out.println("FLOOD - " + ratio);
+		boolean placedFirst = false;
+		
+		ChunkCoordinates validLoc = null;
+		
+		for(ArrayList<ChunkCoordinates> airToReplace : roomsToFlood) {
+			for(ChunkCoordinates loc : airToReplace) {
+				if(world.getBlock(loc.posX, loc.posY, loc.posZ) == EvilDead.blockBloodDripper) {
+
+					boolean wall = false;
+					Block block;
+					
+					block = world.getBlock(loc.posX + 1, loc.posY, loc.posZ);
+					if(block != EvilDead.blockBloodDripper && block != EvilDead.blockBloodFluid) {
+						wall = true;
+					}
+					else{
+						block = world.getBlock(loc.posX - 1, loc.posY, loc.posZ);
+						if(block != EvilDead.blockBloodDripper && block != EvilDead.blockBloodFluid) {
+							wall = true;
+						}
+						else {
+							block = world.getBlock(loc.posX, loc.posY, loc.posZ + 1);
+							if(block != EvilDead.blockBloodDripper && block != EvilDead.blockBloodFluid) {
+								wall = true;
+							}
+							else {
+								block = world.getBlock(loc.posX, loc.posY, loc.posZ - 1);
+								if(block != EvilDead.blockBloodDripper && block != EvilDead.blockBloodFluid) {
+									wall = true;
+								}
+							}
+						}
+					}
+					
+					if(wall) {
+						validLoc = loc;
+						if(ratio == 0 || world.rand.nextInt(ratio) == 0) {
+							world.setBlock(loc.posX, loc.posY, loc.posZ, EvilDead.blockBloodFluid);
+							placedFirst = true;
+						}
+					}
+				}
+			}
+		}
+		
+		// if we didn't get at least 1, place one in the last valid loc.
+		if(atLeastOne && !placedFirst && validLoc != null) {
+			world.setBlock(validLoc.posX, validLoc.posY, validLoc.posZ, EvilDead.blockBloodFluid);
+		}
+	}
 	
 	/**
 	 * Finds the houses based on enclosed structures (a player cannot exit) with a door and remembers
@@ -261,6 +358,19 @@ public class HouseBleeder {
 	
 	
 
+	
+	public void setToAir() {
+		for(int x = origin.posX - radius; x < origin.posX + radius; x++) {
+        	for(int z = origin.posZ - radius; z < origin.posZ + radius; z++) {
+        		for(int y = origin.posY - radius; y < origin.posZ + radius; y++) {
+        			if(world.getBlock(x, y, z) == EvilDead.blockTestMarker ||
+        				world.getBlock(x, y, z) == EvilDead.blockBloodDripper) {
+        				world.setBlock(x, y, z, Blocks.air);
+        			}
+        		}
+        	}
+		}
+	}
 	
 	
 	public void traverserTest() {
