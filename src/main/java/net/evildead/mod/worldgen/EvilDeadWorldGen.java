@@ -3,11 +3,9 @@ package net.evildead.mod.worldgen;
 import java.util.Random;
 
 import net.evildead.mod.worldgen.structure.EvilCabin;
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.feature.WorldGenMinable;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class EvilDeadWorldGen implements IWorldGenerator {
